@@ -104,5 +104,72 @@ else if cmstdt gt rfendt and rfendt=. then epoch='FOLLOW-UP';
 end;
 run;
 
+/*Create CMSEQ*/
+%sort(ds=cm_dm, var=usubjid);
+
+data cmseq;
+set cm_dm;
+by usubjid;
+if first.usubjid then cmseq=1;
+else cmseq+1;
+run;
+
+Proc format;
+invalue ft "3 per week"=0.42
+"4 tabs weekly"=0.57
+"4 tabs weekly"=0.57
+"6 X WK"=0.85
+"6 X WK"=0.85
+"6 times per day"=6
+"6xwk"=0.85
+"75cc/H"=.
+"8 times per day"=8
+"BID"=2
+"BID, PRN"=.
+"BID,PRN"=.
+"Cont. Inf."=
+"Cont. drip"=.
+"Continuous"=.
+"Every 2 weeks"=0.07
+"HS"=0.5
+"ND"=.
+"OD"=1
+"Once"=1
+"Once per Hour"=24
+"Once per Month"=0.03
+"Once per week"=0.14
+"other: 2doses"=2
+"other: 2 x wk"=0.14
+"other:2xWK"=0.14
+"Other:72 hrs"=0.33
+"Other:72 hrs."=0.33
+"other:AC & HS"=0.5
+"Other:Q 3 days"=0.33
+"Other:Q 10 days"=0.1
+"Other: Q21day"=0.51
+"Other:Q2h"=12
+"Other:Q2wk"=0.07
+"other:Q6WK"=0.02
+"Other:Q72h"=0.33
+"Other:QAM"=1
+"Other:QOW"=0.14
+"Other: QPM"=1
+"Other: Qhd"=.
+"Other: Qhr"=24
+"Other: Qow"=0.07
+"Other: Qwk"=0.14
+"Other: x4"=.
+"Other: q72h"=0.33
+"Other: Qhd"=.
+"Other:2am 1pm"=2
+"Other:C12h and"
+"Other:Every2wks"=0.07
+"Other:Once/Cycl"=.
+"Other:Oncew/che"=.
+"other: 3 days"=0.33
+
+
+
+
 
 
