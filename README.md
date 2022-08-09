@@ -39,6 +39,8 @@ CMENRF-------End reference period of the medication
 ***************************************************************************************
 /*Concomitatnt#2*/
 /*Create Format for Freq*/
+
+options validvarname=upcase missing;
 Proc format;
 invalue ft "3 per week"=0.42
 "4 tabs weekly"=0.57
@@ -242,7 +244,75 @@ else cmstat=" ";
 if cmstat="Not done" then cmreasnd="forgot to collect";
 run;
 
+data sdt.sdtm_cm;
+set cmpresp;
+run;
 
+/*supplemental qualifiers----------suppqual
+studyid------------study identifier
+rdomain------------related domain
+idvar--------------Identify variable
+idvarval-----------Identifier variable value
+qnam---------------Name of the variable 
+qlabel-------------label
+qval---------------variable value
+qeval---------------evaluated
+qorgin-------------origin of the data or source of the data*/
+
+data supp;
+set raw.nsmed;
+usubjid=catx('-', study, stdysite, patient); 
+keep usubjid atc:;
+run;
+
+data cm;
+set sdt.sdtm_cm;
+keep studyid usubjid domain cmseq;
+run;
+
+/*Merge supp to cm*/
+Proc sort data=supp;
+by usubjid;
+run;
+proc sort data=cm;
+by usubjid;
+run;
+
+data supp_cm;
+merge supp cm;
+by usubjid;
+run;
+
+data supp1 (drop=domain cmseq);
+set supp_Cm;
+rdomain=domain;
+idvar="CMSEQ";
+idvarval=cmseq;
+run;
+
+/*transpose the data*/
+proc sort data=suppq;
+by studyid usubjid rdomain idvar idvarval;
+run;
+proc transpose data=suppq out=supp2;
+var ATC:;
+by studyid usubjid rdomain idvar idvarval;
+run;
+
+data supp3 (drop=_Name_ _Label_ _col1);
+set supp2;
+qnam=_Name_;
+qlabel=_Label_';
+qval=col1;
+qeval="investigator";
+qorig="Who dictionary";
+run;
+
+data sdt.supp_cm;
+set supp3;
+run;
+
+SUbdm: Pull the values for race, other race related information, raw random dataset
 
 
 
