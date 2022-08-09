@@ -160,6 +160,7 @@ domain='CM';
 usubjid=catx('-', study, stdysite, patient);
 cmtrt=medx;
 cmmodify=medptx;
+cmdecod=medptx; or /*PT in who dictionary*/
 cmcat=upcase(lblstyp);
 cmscat=upcase(tmttyp);
 cmindc=tmtrsnx;
@@ -170,7 +171,7 @@ cmdoseu=doseu;
 cmdosfrq=freq;
 if freq ne ' ' then
 frq=input(freq,ft.);
-comdostot=cmdose*
+comdostot=cmdose;
 cmroute=route;
 if startdt ne . then do;
 if startdtp='DY' then cmstdtc=put(datepart(startdt),Is8601da.);
@@ -226,7 +227,20 @@ if first.usubjid then cmseq=1;
 else cmseq+1;
 run;
 
+*****CMSPID: CRF page number
 
+/*derive cmsprep*/
+data cmpresp;
+set cmseq;
+if cmtrt in ("Atenolol" "Advil" "centrum" "Ancef" "Nexium" "Demerol" "Heparin" "Doxycyline" "Prednisone" "Benadryl" "Ibuprofen" "Imodium" "Reglan" "Methadone""Oxycodone" "Advair" "Hydrocodone " "Milk of Magnesia" "Tylenol" "Vitamin D/Calcium" " Taxol") then cmpresp="Y";
+if cmpresp="Y" and cmtrt in ("Atenolol" "Advil" "Centrum" "prednisone" "Benadryl" "Ibuprofen" "tylenol" "Vitamin D/Calcium" "Doxycycline")
+cmoccur='Y';
+else if cmpresp="Y" and cmtrt in ("Ancef" "Nexium" "Demerol" "Heparin" "reglan" "imodium") then cmoccur="N";
+else if cmpresp="Y" and cmtrt in ("methadone" "milk of magnesia" "Adavir" "Hydrocodone") then cmoccur=" ";
+if cmpresp="Y" and cmoccur=" " then cmstat="Not done";
+else cmstat=" ";
+if cmstat="Not done" then cmreasnd="forgot to collect";
+run;
 
 
 
